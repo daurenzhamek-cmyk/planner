@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Планировщик задач</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header class="band">
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1 id="dTitle">Сегодня</h1>
+        <div class="subtitle" id="dSub"></div>
+      </div>
+      <div class="nav">
+        <button id="prev" aria-label="Предыдущий день">‹</button>
+        <button id="today">Сегодня</button>
+        <button id="next" aria-label="Следующий день">›</button>
+      </div>
+    </div>
+    <div id="alert" role="status"></div>
+  </div>
+</header>
+
+<main class="band">
+  <div class="grid">
+    <section>
+      <div id="fMode" hidden></div>
+      <form id="form" autocomplete="off" novalidate>
+        <input id="fTitle" placeholder="Новая задача — например, «Отчёт для руководителя»" aria-label="Название задачи" maxlength="200">
+        <button class="primary" id="fBtn" type="submit">Добавить</button>
+        <div class="row2">
+          <div class="seg" role="group" aria-label="Категория">
+            <button type="button" data-cat="work" aria-pressed="true">Работа</button>
+            <button type="button" data-cat="pers" aria-pressed="false">Личное</button>
+          </div>
+          <label class="fl">Срок: дата *<input id="fDate" type="date"></label>
+          <label class="fl">Время *<input id="fTime" type="time"></label>
+          <label class="tg"><input type="checkbox" id="fUrg">Срочно</label>
+          <label class="tg"><input type="checkbox" id="fImp">Важно</label>
+          <select id="fRep" aria-label="Повтор">
+            <option value="none">Один раз</option>
+            <option value="daily">Каждый день</option>
+            <option value="weekdays">По будням</option>
+            <option value="weekly">Каждую неделю</option>
+          </select>
+          <button type="button" class="ghost" id="fCancel" hidden>Отмена</button>
+        </div>
+        <textarea id="fSubs" rows="2" aria-label="Быстрые подзадачи"></textarea>
+        <div id="fErr" role="alert"></div>
+      </form>
+
+      <div class="chips" role="group" aria-label="Фильтр">
+        <button data-f="all" aria-pressed="true">Все</button>
+        <button data-f="work" aria-pressed="false">Работа</button>
+        <button data-f="pers" aria-pressed="false">Личное</button>
+      </div>
+
+      <div class="chips" id="viewTabs" role="group" aria-label="Вид">
+        <button data-v="all" aria-pressed="true">Все задачи</button>
+        <button data-v="day" aria-pressed="false">По дням</button>
+      </div>
+      <div id="qInfo"><span id="qInfoT"></span><button class="ghost" id="qReset">Показать все</button></div>
+      <h2 id="listH">Задачи на день</h2>
+      <ul id="list"></ul>
+      <details class="dn" id="doneBox" hidden><summary id="doneSum"></summary><ul id="doneList"></ul></details>
+
+      <div class="sec" id="overSec" hidden>
+        <h2>Хвосты с прошлых дней <span class="n" id="overN"></span></h2>
+        <button class="ghost" id="moveAll">Перенести все на сегодня</button>
+        <ul id="over"></ul>
+      </div>
+      <div id="note"></div>
+      <div class="tools">
+        <button class="ghost" id="exportBtn" type="button">Экспорт JSON</button>
+        <button class="ghost" id="importBtn" type="button">Импорт JSON</button>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+      </div>
+    </section>
+
+    <aside class="side">
+      <div class="card">
+        <h2 id="resH">Итоги дня</h2>
+        <div class="ring">
+          <svg viewBox="0 0 120 120" aria-hidden="true">
+            <circle cx="60" cy="60" r="52" fill="none" stroke="var(--line)" stroke-width="12"/>
+            <circle id="rWork" cx="60" cy="60" r="52" fill="none" stroke="var(--work)" stroke-width="12" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+            <circle id="rPers" cx="60" cy="60" r="52" fill="none" stroke="var(--pers)" stroke-width="12" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+          </svg>
+          <div class="c"><div class="pct" id="pct">0%</div><div class="of" id="of">нет задач</div></div>
+        </div>
+        <div id="bars"></div>
+      </div>
+      <div class="card">
+        <h2>Матрица: срочно / важно</h2>
+        <div class="mx" id="mx"></div>
+        <div class="hint"><span id="mxNote">Все открытые задачи.</span> Нажмите на квадрант, чтобы отфильтровать список.</div>
+      </div>
+      <div class="card">
+        <h2>Неделя</h2>
+        <div class="week" id="week"></div>
+        <div class="stats">
+          <div><b id="sWeek">—</b><span>выполнено за 7 дней</span></div>
+          <div><b id="sStreak">0</b><span>дней подряд без хвостов</span></div>
+          <div><b id="sOver">0</b><span>просрочено</span></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</main>
+<div id="toast"><span id="toastT"></span><button id="undo">Вернуть</button></div>
+
+<script src="js/model.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
